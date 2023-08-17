@@ -14,9 +14,6 @@ class UserController extends Controller
         return view('users.mypage', compact('user'));
     }
     
-    
-    
-    
     /**
      * Show the form for editing the specified resource.
      *
@@ -49,5 +46,24 @@ class UserController extends Controller
         $user->update();
 
         return to_route('mypage');
+    }
+
+    public function update_password(Request $request) {
+        $validatedData = $request->validate([
+            'password' => 'required|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if($request->input('password') == $request->input('password_confirmation')){
+            $user->password = bcrypt($request->input('password'));
+            $user->update();
+        }else{
+            return to_route('mypage');
+        }
+    }
+
+    public function edit_password(){
+        return view('users.edit_password');
     }
 }
